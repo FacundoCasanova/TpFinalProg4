@@ -5,9 +5,25 @@ from database import create_db_and_tables, get_session
 from models import Usuario, UsuarioCreate, Token
 from auth import get_password_hash, verify_password, create_access_token, get_current_user
 from datetime import timedelta
+# 1. IMPORTAR ESTO
+from fastapi.middleware.cors import CORSMiddleware 
 import os
 
 app = FastAPI(title="Sistema de Gestión de Rutinas")
+
+# 2. CONFIGURAR LOS PERMISOS (CORS)
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],     # Permitir todos los métodos (GET, POST, etc.)
+    allow_headers=["*"],     # Permitir todos los headers
+)
 
 @app.on_event("startup")
 def on_startup():
@@ -17,20 +33,17 @@ def on_startup():
 
 @app.post("/registro", response_model=Token)
 def registrar_usuario(usuario: UsuarioCreate, session: Session = Depends(get_session)):
-    # 1. Verificar si existe
     statement = select(Usuario).where(Usuario.email == usuario.email)
     existe = session.exec(statement).first()
     if existe:
         raise HTTPException(status_code=400, detail="El email ya está registrado")
     
-    # 2. Crear usuario
     hashed_pwd = get_password_hash(usuario.password)
     nuevo_usuario = Usuario(email=usuario.email, hashed_password=hashed_pwd, nombre_completo=usuario.nombre_completo)
     session.add(nuevo_usuario)
     session.commit()
     session.refresh(nuevo_usuario)
     
-    # 3. Loguear automáticamente (devolver token)
     access_token_expires = timedelta(minutes=30)
     access_token = create_access_token(
         data={"sub": nuevo_usuario.email}, expires_delta=access_token_expires
@@ -39,11 +52,9 @@ def registrar_usuario(usuario: UsuarioCreate, session: Session = Depends(get_ses
 
 @app.post("/token", response_model=Token)
 def login_para_access_token(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(get_session)):
-    # Buscar usuario
     statement = select(Usuario).where(Usuario.email == form_data.username)
     user = session.exec(statement).first()
     
-    # Verificar
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -51,7 +62,6 @@ def login_para_access_token(form_data: OAuth2PasswordRequestForm = Depends(), se
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # Generar Token
     access_token_expires = timedelta(minutes=30)
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
