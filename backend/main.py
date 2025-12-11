@@ -8,8 +8,10 @@ from datetime import timedelta
 # 1. IMPORTAR ESTO
 from fastapi.middleware.cors import CORSMiddleware 
 import os
+import rutinas
 
 app = FastAPI(title="Sistema de Gestión de Rutinas")
+app.include_router(rutinas.router)
 
 # 2. CONFIGURAR LOS PERMISOS (CORS)
 origins = [
