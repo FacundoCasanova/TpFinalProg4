@@ -9,6 +9,7 @@ from datetime import timedelta
 from fastapi.middleware.cors import CORSMiddleware 
 import os
 import rutinas
+import ejercicios
 
 app = FastAPI(title="Sistema de Gestión de Rutinas")
 app.include_router(rutinas.router)

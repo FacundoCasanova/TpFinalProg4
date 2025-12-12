@@ -6,50 +6,78 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // URL de tu Backend (Python)
+  // URL del Backend
   const API_URL = "http://127.0.0.1:8000";
 
-  // Verificar si ya hay un token guardado al iniciar
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       setIsAuthenticated(true);
-      // Aquí podrías pedir los datos del usuario al backend si quisieras
     }
     setLoading(false);
   }, []);
 
+  // --- LOGIN ---
   const login = async (email, password) => {
     try {
-      // El backend espera datos de formulario (OAuth2 standard), no JSON directo
       const formData = new FormData();
       formData.append("username", email);
       formData.append("password", password);
 
       const response = await axios.post(`${API_URL}/token`, formData);
       
-      // Guardar el token en el navegador
       localStorage.setItem("token", response.data.access_token);
       setIsAuthenticated(true);
-      return true; // Login exitoso
+      return true;
     } catch (error) {
       console.error("Error de login:", error);
-      return false; // Login fallido
+      return false;
+    }
+  };
+
+  // --- REGISTER (MODIFICADO: Sin auto-login) ---
+  const register = async (nombre, email, password) => {
+    try {
+      // Solo enviamos los datos, ignoramos el token que devuelve
+      await axios.post(`${API_URL}/registro`, {
+        email: email,
+        nombre_completo: nombre,
+        password: password,
+        es_activo: true
+      });
+      
+      // Retornamos éxito pero NO cambiamos isAuthenticated a true
+      return { success: true };
+    } catch (error) {
+      console.error("Error de registro:", error);
+      
+      // Intentamos obtener el mensaje de error del backend
+      let mensajeError = "Error al registrarse";
+      
+      if (error.response && error.response.data) {
+        // Si el backend mandó un detalle (como "El email ya existe")
+        if (error.response.data.detail) {
+           mensajeError = error.response.data.detail;
+        }
+      }
+      
+      return { 
+        success: false, 
+        message: mensajeError
+      };
     }
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
-    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, loading }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, register, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

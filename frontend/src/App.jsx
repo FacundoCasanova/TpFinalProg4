@@ -1,17 +1,35 @@
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard'; // <--- Nuevo Import
+import Dashboard from './pages/Dashboard';
+import DetalleRutina from './pages/DetalleRutina'; // <--- Importar
 
-const Main = () => {
-  const { isAuthenticated } = useAuth();
-  // Si está logueado, muestra Dashboard. Si no, Login.
-  return isAuthenticated ? <Dashboard /> : <Login />;
+// Componente para proteger rutas (Si no logueado -> Login)
+const RutaPrivada = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return <div>Cargando...</div>;
+  return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
 function App() {
   return (
     <AuthProvider>
-      <Main />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        
+        <Route path="/" element={
+          <RutaPrivada>
+            <Dashboard />
+          </RutaPrivada>
+        } />
+        
+        {/* Nueva Ruta para Detalle */}
+        <Route path="/rutina/:id" element={
+          <RutaPrivada>
+            <DetalleRutina />
+          </RutaPrivada>
+        } />
+      </Routes>
     </AuthProvider>
   );
 }
