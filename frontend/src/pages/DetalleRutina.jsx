@@ -8,7 +8,10 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import axios from 'axios';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable'; // <--- CAMBIO 1: Importamos la función
 
 export default function DetalleRutina() {
   const { id } = useParams();
@@ -39,6 +42,56 @@ export default function DetalleRutina() {
   useEffect(() => {
     cargarDatos();
   }, [id]);
+
+  // --- FUNCIÓN GENERAR PDF ARREGLADA ---
+  const generarPDF = () => {
+    const doc = new jsPDF();
+    
+    // Título
+    doc.setFontSize(20);
+    doc.setTextColor(40, 40, 40);
+    doc.text("Plan de Entrenamiento", 14, 22);
+    
+    doc.setFontSize(12);
+    doc.text(`Generado el: ${new Date().toLocaleDateString()}`, 14, 30);
+
+    let yPos = 40; 
+
+    dias.forEach(dia => {
+      const ejerciciosDia = ejercicios.filter(e => e.dia_semana === dia);
+      if (ejerciciosDia.length > 0) {
+        
+        // Título del día
+        doc.setFontSize(14);
+        doc.setTextColor(0, 102, 204);
+        doc.text(dia, 14, yPos);
+        yPos += 5;
+
+        // Tabla de ejercicios
+        const tablaData = ejerciciosDia.map(e => [
+          e.nombre,
+          `${e.series} x ${e.repeticiones}`,
+          e.peso > 0 ? `${e.peso} kg` : '-',
+          e.notas || '-'
+        ]);
+
+        // <--- CAMBIO 2: Usamos autoTable(doc, opciones) en vez de doc.autoTable
+        autoTable(doc, {
+          startY: yPos,
+          head: [['Ejercicio', 'Series/Reps', 'Peso', 'Notas']],
+          body: tablaData,
+          theme: 'striped',
+          headStyles: { fillColor: [0, 102, 204] },
+          margin: { left: 14 }
+        });
+
+        // Actualizar posición para la siguiente tabla
+        yPos = doc.lastAutoTable.finalY + 15;
+      }
+    });
+
+    doc.save(`rutina_gym_${id}.pdf`);
+  };
 
   const handleCrear = async () => {
     try {
@@ -73,12 +126,23 @@ export default function DetalleRutina() {
 
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h4" fontWeight="bold">Plan de Entrenamiento</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => setOpen(true)}>
-          Agregar Ejercicio
-        </Button>
+        <Box>
+          <Button 
+            variant="outlined" 
+            color="error" 
+            startIcon={<PictureAsPdfIcon />} 
+            onClick={generarPDF}
+            sx={{ mr: 2 }}
+            disabled={ejercicios.length === 0}
+          >
+            PDF
+          </Button>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={() => setOpen(true)}>
+            Agregar Ejercicio
+          </Button>
+        </Box>
       </Box>
 
-      {/* Listado agrupado por días */}
       {dias.map((dia) => {
         const ejerciciosDelDia = ejercicios.filter(e => e.dia_semana === dia);
         if (ejerciciosDelDia.length === 0) return null;
@@ -86,7 +150,6 @@ export default function DetalleRutina() {
         return (
           <Box key={dia} mb={4}>
             <Chip label={dia} color="primary" sx={{ mb: 2, fontSize: '1.2rem', p: 2 }} />
-            {/* CORREGIDO GRID */}
             <Grid container spacing={2}>
               {ejerciciosDelDia.map((ej) => (
                 <Grid size={{ xs: 12 }} key={ej.id}>
@@ -117,7 +180,6 @@ export default function DetalleRutina() {
         </Typography>
       )}
 
-      {/* Modal para agregar */}
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth>
         <DialogTitle>Nuevo Ejercicio</DialogTitle>
         <DialogContent>

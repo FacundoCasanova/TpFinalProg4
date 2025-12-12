@@ -13,7 +13,7 @@ import ejercicios
 
 app = FastAPI(title="Sistema de Gestión de Rutinas")
 app.include_router(rutinas.router)
-
+app.include_router(ejercicios.router)
 # 2. CONFIGURAR LOS PERMISOS (CORS)
 origins = [
     "http://localhost:5173",
