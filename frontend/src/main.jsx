@@ -2,14 +2,14 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
-import { ThemeProvider, CssBaseline } from '@mui/material'; // <--- Importamos esto
-import theme from './theme'; // <--- Importamos nuestro tema nuevo
+import { ThemeProvider, CssBaseline } from '@mui/material'; 
+import theme from './theme'; 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <ThemeProvider theme={theme}> {/* Envolvemos con el tema */}
-        <CssBaseline /> {/* Normaliza los estilos del navegador */}
+      <ThemeProvider theme={theme}> {}
+        <CssBaseline /> {}
         <App />
       </ThemeProvider>
     </BrowserRouter>

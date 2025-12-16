@@ -5,7 +5,7 @@ from database import create_db_and_tables, get_session
 from models import Usuario, UsuarioCreate, Token
 from auth import get_password_hash, verify_password, create_access_token, get_current_user
 from datetime import timedelta
-# 1. IMPORTAR ESTO
+
 from fastapi.middleware.cors import CORSMiddleware 
 import os
 import rutinas
@@ -14,7 +14,7 @@ import ejercicios
 app = FastAPI(title="Sistema de Gestión de Rutinas")
 app.include_router(rutinas.router)
 app.include_router(ejercicios.router)
-# 2. CONFIGURAR LOS PERMISOS (CORS)
+
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
@@ -24,15 +24,15 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],     # Permitir todos los métodos (GET, POST, etc.)
-    allow_headers=["*"],     # Permitir todos los headers
+    allow_methods=["*"],     
+    allow_headers=["*"],    
 )
 
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
 
-# --- ENDPOINTS DE AUTENTICACIÓN ---
+
 
 @app.post("/registro", response_model=Token)
 def registrar_usuario(usuario: UsuarioCreate, session: Session = Depends(get_session)):

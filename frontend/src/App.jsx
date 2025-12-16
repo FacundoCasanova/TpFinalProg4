@@ -2,9 +2,9 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import DetalleRutina from './pages/DetalleRutina'; // <--- Importar
+import DetalleRutina from './pages/DetalleRutina'; 
 
-// Componente para proteger rutas (Si no logueado -> Login)
+
 const RutaPrivada = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   if (loading) return <div>Cargando...</div>;
@@ -23,7 +23,7 @@ function App() {
           </RutaPrivada>
         } />
         
-        {/* Nueva Ruta para Detalle */}
+        {}
         <Route path="/rutina/:id" element={
           <RutaPrivada>
             <DetalleRutina />

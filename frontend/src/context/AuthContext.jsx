@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // URL del Backend
+ 
   const API_URL = "http://127.0.0.1:8000";
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // --- LOGIN ---
+  
   const login = async (email, password) => {
     try {
       const formData = new FormData();
@@ -38,10 +38,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // --- REGISTER (MODIFICADO: Sin auto-login) ---
+ 
   const register = async (nombre, email, password) => {
     try {
-      // Solo enviamos los datos, ignoramos el token que devuelve
+      
       await axios.post(`${API_URL}/registro`, {
         email: email,
         nombre_completo: nombre,
@@ -49,16 +49,16 @@ export const AuthProvider = ({ children }) => {
         es_activo: true
       });
       
-      // Retornamos éxito pero NO cambiamos isAuthenticated a true
+      
       return { success: true };
     } catch (error) {
       console.error("Error de registro:", error);
       
-      // Intentamos obtener el mensaje de error del backend
+      
       let mensajeError = "Error al registrarse";
       
       if (error.response && error.response.data) {
-        // Si el backend mandó un detalle (como "El email ya existe")
+        
         if (error.response.data.detail) {
            mensajeError = error.response.data.detail;
         }

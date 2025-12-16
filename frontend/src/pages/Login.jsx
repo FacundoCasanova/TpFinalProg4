@@ -51,10 +51,10 @@ export default function Login() {
   };
 
   return (
-    // FONDO CON DEGRADADO
+    
     <Box sx={{ 
       minHeight: '100vh', 
-      background: 'linear-gradient(135deg, #1a237e 0%, #0d47a1 100%)', // Degradado Azul
+      background: 'linear-gradient(135deg, #1a237e 0%, #0d47a1 100%)', 
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center' 

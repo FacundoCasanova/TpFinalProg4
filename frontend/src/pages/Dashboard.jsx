@@ -57,7 +57,7 @@ export default function Dashboard() {
 
   return (
     <Box sx={{ flexGrow: 1, minHeight: '100vh', bgcolor: '#f5f7fa' }}>
-      {/* BARRA SUPERIOR AZUL */}
+      {}
       <AppBar position="static" elevation={0}>
         <Toolbar>
           <FitnessCenterIcon sx={{ mr: 2 }} />
@@ -134,7 +134,7 @@ export default function Dashboard() {
           <AddIcon />
         </Fab>
 
-        {/* Modal de Creación (Igual que antes) */}
+        {}
         <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
           <DialogTitle sx={{ bgcolor: 'primary.main', color: 'white' }}>Nueva Rutina</DialogTitle>
           <DialogContent sx={{ mt: 2 }}>

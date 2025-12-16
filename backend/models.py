@@ -2,7 +2,7 @@ from typing import Optional, List
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime
 
-# --- MODELO USUARIO ---
+
 class UsuarioBase(SQLModel):
     email: str = Field(unique=True, index=True)
     nombre_completo: Optional[str] = None
@@ -16,7 +16,7 @@ class Usuario(UsuarioBase, table=True):
 class UsuarioCreate(UsuarioBase):
     password: str
 
-# --- MODELO EJERCICIO ---
+
 class EjercicioBase(SQLModel):
     nombre: str
     dia_semana: str
@@ -31,7 +31,7 @@ class Ejercicio(EjercicioBase, table=True):
     rutina_id: Optional[int] = Field(default=None, foreign_key="rutina.id")
     rutina: Optional["Rutina"] = Relationship(back_populates="ejercicios")
 
-# --- MODELO RUTINA ---
+
 class RutinaBase(SQLModel):
     nombre: str = Field(index=True)
     descripcion: Optional[str] = None
@@ -55,7 +55,7 @@ class RutinaRead(RutinaBase):
     creador_id: int
     ejercicios: List[Ejercicio] = []
 
-# --- TOKENS ---
+
 class Token(SQLModel):
     access_token: str
     token_type: str

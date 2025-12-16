@@ -3,10 +3,10 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1a237e', // Azul marino profundo
+      main: '#1a237e',
     },
     secondary: {
-      main: '#ff6f00', // Naranja vibrante
+      main: '#ff6f00', 
     },
     background: {
       default: '#f5f7fa',
@@ -42,4 +42,4 @@ const theme = createTheme({
   },
 });
 
-export default theme; // <--- ¡ESTA LÍNEA ES CRUCIAL!
+export default theme; 
