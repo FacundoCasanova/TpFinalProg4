@@ -9,7 +9,11 @@ API RESTful desarrollada con **FastAPI** y **PostgreSQL** para la gestión de ru
 
 ## 🚀 Instalación y Configuración
 
-1. **Crear entorno virtual:**
+1. \*\*Entrar a la carpeta del frontend:
+
+cd frontend
+
+2. \*\*Crear entorno virtual:
    ```bash
    python -m venv venv
    ```
@@ -20,11 +24,11 @@ Windows: venv\Scripts\activate
 
 Mac/Linux: source venv/bin/activate
 
-Instalar dependencias:
+3. \*\*Instalar dependencias:
 
 pip install fastapi uvicorn sqlmodel psycopg2-binary python-dotenv pydantic python-jose[cryptography] passlib[bcrypt] python-multipart
 
-Configurar Base de Datos:
+4. \*\*Configurar Base de Datos:
 
 Crea una base de datos en PostgreSQL llamada gym_db.
 
